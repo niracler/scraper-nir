@@ -30,6 +30,11 @@
 https://github.com/OneSmallTeam/scraper
 
 
+## 联系
+项目需要完善的地方还有很多，如有BUG或者更好的建议欢迎提出
+
+* [issue](https://github.com/OneSmallTeam/scraper/issues)
+* mail:niracler@gmail.com
 
 ## 参考项目：
 
