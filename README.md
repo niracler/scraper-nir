@@ -41,3 +41,5 @@ https://github.com/OneSmallTeam/scraper
 [scrapy框架](https://scrapy.org/)  信息采集部分主要就是用的scrapy框架
 
 [H-Viewer](https://github.com/PureDark/H-Viewer) 非常感谢这个项目,让我们找到了设计方向
+
+[scrapy-tutorial-9-how-use-scrapy-item](https://blog.michaelyin.info/scrapy-tutorial-9-how-use-scrapy-item/) 优雅地解决了存储数据到数据库的问题
