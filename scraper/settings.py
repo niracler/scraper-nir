@@ -109,3 +109,12 @@ MYSQL_HOST = 'niracler.com'
 MYSQL_USER = 'team'
 MYSQL_PASSWD = '12345678'
 MYSQL_PORT = 3306
+
+CONNECTION_STRING = "{drivername}://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8".format(
+    drivername="mysql",
+    user="team",
+    passwd="12345678",
+    host="niracler.com",
+    port="3306",
+    db_name="web_db",
+)
