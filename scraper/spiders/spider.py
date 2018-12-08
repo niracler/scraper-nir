@@ -1,23 +1,27 @@
 from functools import reduce
-
 import scrapy
+from sqlalchemy.orm import sessionmaker
 from scraper.items import ArticleItem
-from scraper.helpers.dbhelper import TestDBHelper
+from ..models import db_connect, create_table, Rule
 
 
-# 测试用的爬虫
 class Spider(scrapy.Spider):
     name = "spider"
 
     # 这里放你要爬取的网站的ＵＲＬ
     start_urls = ["", ]
 
-    # 初始化爬虫,先获取爬取规则
-    def __init__(self, rule_id=2, **kwargs):
+    def __init__(self, **kwargs):
+        """初始化爬虫,先获取爬取规则"""
         super().__init__(**kwargs)
 
-        dbHelper = TestDBHelper()
-        self.rule = dbHelper.getRule(rule_id)
+        engine = db_connect()
+        create_table(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        rules = session.query(Rule).all()
+
+        self.rule = rules[0]
         print(self.rule)
         self.start_urls[0] = self.rule.url
 

@@ -102,19 +102,12 @@ ITEM_PIPELINES = {
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-MYSQL_DBNAME = 'web_db'
-
 # 关于数据库的配置
-MYSQL_HOST = 'niracler.com'
-MYSQL_USER = 'team'
-MYSQL_PASSWD = '12345678'
-MYSQL_PORT = 3306
-
 CONNECTION_STRING = "{drivername}://{user}:{passwd}@{host}:{port}/{db_name}?charset=utf8".format(
     drivername="mysql",
-    user="team",
-    passwd="12345678",
+    user="root",
+    passwd="123456",
     host="niracler.com",
-    port="3306",
-    db_name="web_db",
+    port="3333",
+    db_name="dataname",
 )

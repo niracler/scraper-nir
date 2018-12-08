@@ -1,50 +1,42 @@
 from functools import reduce
-
 import scrapy
-from scraper.helpers.dbhelper import dbHelper
-from scraper.helpers.rule import Rule
+from sqlalchemy.orm import sessionmaker
+from scraper.items import ArticleItem
+from ..models import db_connect, create_table, Rule
 
 
-# 测试用的爬虫
 class Spider(scrapy.Spider):
-    name = "test_spider"
+    name = "llss_spider"
 
     # 这里放你要爬取的网站的ＵＲＬ
-    start_urls = ["http://renjian.163.com", ]
+    start_urls = ["", ]
 
-    # 初始化爬虫,先获取爬取规则
     def __init__(self, **kwargs):
+        """初始化爬虫,先获取爬取规则"""
         super().__init__(**kwargs)
 
-        self.rule = Rule()
-        self.rule.url = self.start_urls[0]
-        self.rule.loop_rule = "//h3/a[@class='tit']"
-        self.rule.title_rule = "text()"
-        self.rule.content_rule = "//div[@id='endText']/p/text()"
-        self.rule.type_rule = "null"
-        self.rule.url_rule = "@href"
-        self.rule.table_name = "renjian"
-        self.rule.type = "article_no_content"
+        engine = db_connect()
+        create_table(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        rules = session.query(Rule).all()
 
-        # 请帮我放到数据库
-        # dbHelper.setRule(self.rule)
+        self.rule = rules[0]
+        print(self.rule)
+        self.start_urls[0] = self.rule.url
 
         self.parses = dict(
             article=self.article_parse,
-            article_no_content=self.article_no_content_parse,
-            picture=self.picture_parse
+            article_no_content=self.article_no_content_parse
         )
 
     # 这里是如何处理你爬取回来的信息
     def parse(self, response):
-        # pass
-        yield scrapy.Request(self.rule.url, callback=self.parses[self.rule.type])
+        for i in range(1, 500):
+            stradd = '/page/' + str(i)
+            yield scrapy.Request(self.rule.url + stradd, callback=self.parses[self.rule.type])
 
-    # 关于图片的爬取
-    def picture_parse(self, response):
-        pass
-
-    # 处理内容的parse
+    # 爬取内容的
     def content_parse(self, response):
         article = response.meta['article']
         url = article.xpath(self.rule.url_rule).extract_first()
@@ -75,13 +67,14 @@ class Spider(scrapy.Spider):
         if len(content) > 800:
             content = content[:800] + "..."
 
-        yield {
-            'table_name': str(talbe_name),
-            'title': str(title),
-            'content': str(content),
-            'type': str(type),
-            'url': str(url)
-        }
+        item = ArticleItem()
+        item['table_name'] = str(talbe_name)
+        item['title'] = str(title)
+        item['content'] = str(content)
+        item['type'] = str(type)
+        item['url'] = str(url)
+
+        yield item
 
     # 内容要去特地查找内容的文章
     def article_no_content_parse(self, response):
@@ -123,14 +116,14 @@ class Spider(scrapy.Spider):
 
             try:
                 content = str(reduce(lambda x, y: str(x) + str(y), content))
-
             except Exception as e:
                 print(e)
 
-            yield {
-                'table_name': str(talbe_name),
-                'title': str(title),
-                'content': str(content),
-                'type': str(type),
-                'url': str(url)
-            }
+            item = ArticleItem()
+            item['table_name'] = str(talbe_name)
+            item['title'] = str(title)
+            item['content'] = str(content)
+            item['type'] = str(type)
+            item['url'] = str(url)
+
+            yield item
